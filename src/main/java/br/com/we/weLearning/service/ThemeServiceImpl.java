@@ -17,8 +17,8 @@ public class ThemeServiceImpl implements ThemeService {
 	ThemeDao themeDao;
 
 	@Override
-	public void save(Theme theme) throws Exception {
-		themeDao.save(theme);
+	public Theme save(Theme theme) throws Exception {
+		return themeDao.save(theme);
 	}
 
 	@Override

@@ -7,9 +7,9 @@ import br.com.we.weLearning.model.User;
 
 public interface UserService {
 	
-	void save(User user) throws Exception;
+	User save(User user) throws Exception;
 	
-	void update(User user) throws Exception;
+	User update(User user) throws Exception;
 	
 	void deleteById(int id) throws Exception;
 	

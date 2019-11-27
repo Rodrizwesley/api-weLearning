@@ -6,7 +6,7 @@ import br.com.we.weLearning.model.Theme;
 
 public interface ThemeService {
 	
-	void save(Theme theme) throws Exception;
+	Theme save(Theme theme) throws Exception;
 	
 	void update(Theme theme) throws Exception;
 	

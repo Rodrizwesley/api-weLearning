@@ -1,7 +1,6 @@
 package br.com.we.weLearning.controller;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.we.weLearning.enums.DatabaseStatus;
-import br.com.we.weLearning.enums.Profile;
 import br.com.we.weLearning.model.User;
 import br.com.we.weLearning.service.UserService;
 
@@ -33,14 +30,49 @@ public class UserController {
 	HttpSession httpSession;
 	
 	@RequestMapping(value = "/user", method = RequestMethod.PUT, produces = "application/json")
-	public Map<String, Object> newUser(@RequestBody User data) throws Exception{
+	public ResponseEntity<User> newUser(@RequestBody User data) throws Exception{
 		
 		Map<String, Object> retorno = new HashMap<String, Object>();
 		Boolean ok = false;
+		User user = null;
 		
 		try {
 			if(userService.findByusername(data.getUsername()) == null && userService.findByCpf(data.getCpf()) == null) {
-				userService.save(data);
+				user = userService.save(data);
+			}
+			else {
+				System.out.println("teste");
+			}
+			
+			ok = true;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+        if(!ok) {
+        	retorno.put("response", ok);
+        }
+ 
+        return new ResponseEntity<User>(user, HttpStatus.OK); 
+	}
+	
+	@RequestMapping(value = "/user", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<User> updateUser(@RequestBody User data) throws Exception{
+		
+		Map<String, Object> retorno = new HashMap<String, Object>();
+		Boolean ok = false;
+		User user = null;
+		
+		try {
+			if(userService.findByusername(data.getUsername()) == null && userService.findByCpf(data.getCpf()) == null) {
+				user = userService.update(user);
+	        	if(user != null) {
+	        		ok = true;
+	        	}
+	        	else {
+	        		return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+	        	}
 			}
 			else {
 				System.out.println("teste");
@@ -54,7 +86,7 @@ public class UserController {
 		
 		retorno.put("response", ok);
 		
-		return retorno;
+		return new ResponseEntity<User>(user, HttpStatus.OK); 
 	}
 	
     @RequestMapping(value = "/user/{idUser}", method = RequestMethod.GET, produces = "application/json") 
@@ -82,6 +114,44 @@ public class UserController {
         return new ResponseEntity<User>(user, HttpStatus.OK); 
     }
     
+    @RequestMapping(value = "/user/inative/{idUser}", method = RequestMethod.POST, produces = "application/json") 
+    public Map<String, Object> inativeUser(@PathVariable("idUser") int idUser) throws UnsupportedEncodingException  { 
+        Map<String, Object> retorno = new HashMap<String, Object>();
+        Boolean ok = false; 
+        try { 
+        	userService.inativeById(idUser);
+        	ok = true;
+        	retorno.put("response", "Falha ao inativar Usuário");
+        } catch (Exception e) { 
+            e.printStackTrace(); 
+        } 
+ 
+
+        	retorno.put("response", ok);
+
+ 
+        return retorno; 
+    }
+    
+    @RequestMapping(value = "/user/{idUser}", method = RequestMethod.DELETE, produces = "application/json") 
+    public Map<String, Object> delete(@PathVariable("idUser") int idUser) throws UnsupportedEncodingException  { 
+        Map<String, Object> retorno = new HashMap<String, Object>();
+        Boolean ok = false; 
+        try { 
+        	userService.deleteById(idUser);
+        	ok = true;
+        	retorno.put("response", "Falha ao deletar Usuário");
+        } catch (Exception e) { 
+            e.printStackTrace(); 
+        } 
+ 
+
+        	retorno.put("response", ok);
+
+ 
+        return retorno; 
+    }
+    
     @RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<User> doLogin(@RequestBody User data) throws Exception{
     	
@@ -105,5 +175,6 @@ public class UserController {
     		return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
 		}
     }
+
 	
 }

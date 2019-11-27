@@ -19,12 +19,12 @@ public class UserServiceImpl implements UserService {
 	UserDao userDao;
 
 	@Override
-	public void save(User user) throws Exception {
-		userDao.save(user);
+	public User save(User user) throws Exception {
+		return userDao.save(user);
 	}
 
 	@Override
-	public void update(User user) throws Exception {
+	public User update(User user) throws Exception {
 		User _user = userDao.findById((long) user.getIdUser()).get();
 		
 		if(_user != null) {
@@ -35,7 +35,10 @@ public class UserServiceImpl implements UserService {
 			_user.setProfile(user.getProfile());
 			_user.setPassword(user.getPassword());
 			
-			userDao.save(_user);
+			return userDao.save(_user);
+		}
+		else {
+			return null;
 		}
 	}
 
@@ -47,8 +50,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void inativeById(int id) throws Exception {
-		// TODO Auto-generated method stub
-		
+		userDao.inativeById((long) id);
 	}
 
 	@Override
@@ -67,26 +69,22 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<User> findAllUsers() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return userDao.findAll();
 	}
 
 	@Override
 	public List<User> findAllUsersValid() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return userDao.findAllUsersValid();
 	}
 
 	@Override
 	public List<User> findAllUsersInvalid() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return userDao.findAllUsersInvalid();
 	}
 
 	@Override
 	public List<User> findAllUsersDeleted() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return userDao.findAllUsersDeleted();
 	}
 
 	@Override

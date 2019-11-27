@@ -17,8 +17,8 @@ public class ContentServiceImpl implements ContentService{
 	ContentDao contentDao;
 
 	@Override
-	public void save(Content content) throws Exception {
-		contentDao.save(content);
+	public Content save(Content content) throws Exception {
+		return contentDao.save(content);
 	}
 
 	@Override

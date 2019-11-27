@@ -6,7 +6,7 @@ import br.com.we.weLearning.model.Content;
 
 public interface ContentService {
 	
-	void save(Content content) throws Exception;
+	Content save(Content content) throws Exception;
 
 	void updateContent(Content content) throws Exception;
 	
