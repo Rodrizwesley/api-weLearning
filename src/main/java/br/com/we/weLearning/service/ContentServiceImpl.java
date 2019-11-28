@@ -1,5 +1,6 @@
 package br.com.we.weLearning.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.we.weLearning.dao.ContentDao;
+import br.com.we.weLearning.enums.DatabaseStatus;
 import br.com.we.weLearning.model.Content;
 
 @Service("ContentService")
@@ -15,14 +17,16 @@ public class ContentServiceImpl implements ContentService{
 	
 	@Autowired
 	ContentDao contentDao;
-
+	
 	@Override
 	public Content save(Content content) throws Exception {
+		content.setCreatedContent(new Date());
+		content.setDatabaseStatus(DatabaseStatus.ATIVE.getDatabaseStatus());
 		return contentDao.save(content);
 	}
 
 	@Override
-	public void updateContent(Content content) throws Exception {
+	public Content updateContent(Content content) throws Exception {
 		Content _content = contentDao.findById(content.getIdContent()).get();
 		
 		if(_content != null) {
@@ -32,7 +36,10 @@ public class ContentServiceImpl implements ContentService{
 			_content.setTheme(content.getTheme());
 			_content.setUrlContent(content.getUrlContent());
 			
-			contentDao.save(_content);
+			 return contentDao.save(_content);
+		}
+		else {
+			return null;
 		}
 	}
 

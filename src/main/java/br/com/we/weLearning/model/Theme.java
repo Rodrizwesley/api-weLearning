@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name = "theme")
 public class Theme implements Serializable{
@@ -30,6 +32,7 @@ public class Theme implements Serializable{
 	
 	private int databaseStatus;
 	
+	@JsonManagedReference
 	@OneToMany(mappedBy = "theme", targetEntity = Content.class, fetch = FetchType.LAZY)
 	private List<Content> contents;
 	

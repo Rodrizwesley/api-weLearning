@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name = "content")
 public class Content implements Serializable{
@@ -31,10 +33,12 @@ public class Content implements Serializable{
 	
 	private int databaseStatus;
 	
+	@JsonBackReference
 	@ManyToOne
     @JoinColumn(name = "id_ownerUser")
 	private User ownerUser;
 	
+	@JsonBackReference
 	@ManyToOne
     @JoinColumn(name = "id_theme")
 	private Theme theme;

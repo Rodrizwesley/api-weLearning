@@ -8,7 +8,7 @@ public interface ContentService {
 	
 	Content save(Content content) throws Exception;
 
-	void updateContent(Content content) throws Exception;
+	Content updateContent(Content content) throws Exception;
 	
 	Content findById(long id) throws Exception;
 	
