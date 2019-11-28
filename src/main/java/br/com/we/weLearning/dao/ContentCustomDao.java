@@ -21,4 +21,6 @@ public interface ContentCustomDao {
 	List<Content> getAllContentsDeleted() throws Exception;
 	
 	List<Content> getAllContents() throws Exception;
+	
+	List<Long> getAllIdContentsByIdTheme(long idTheme) throws Exception;
 }

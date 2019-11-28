@@ -1,5 +1,6 @@
 package br.com.we.weLearning.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.we.weLearning.dao.ThemeDao;
+import br.com.we.weLearning.enums.DatabaseStatus;
 import br.com.we.weLearning.model.Theme;
 
 @Service("ThemeService")
@@ -18,6 +20,8 @@ public class ThemeServiceImpl implements ThemeService {
 
 	@Override
 	public Theme save(Theme theme) throws Exception {
+		theme.setCreateTheme(new Date());
+		theme.setDatabaseStatus(DatabaseStatus.ATIVE.getDatabaseStatus());
 		return themeDao.save(theme);
 	}
 
@@ -29,7 +33,6 @@ public class ThemeServiceImpl implements ThemeService {
 			
 			_theme.setNmTheme(theme.getNmTheme());
 			_theme.setDescTheme(theme.getDescTheme());
-			_theme.setContents(theme.getContents());
 			
 			themeDao.save(_theme);
 		}
@@ -38,7 +41,7 @@ public class ThemeServiceImpl implements ThemeService {
 
 	@Override
 	public void deleteById(long id) throws Exception {
-		themeDao.deleteById(id);
+		themeDao.deleteThemeById(id);
 		
 	}
 
@@ -75,7 +78,12 @@ public class ThemeServiceImpl implements ThemeService {
 
 	@Override
 	public List<Theme> getAllThemes() throws Exception {
-		return themeDao.getAllThemes();
+		return themeDao.findAll();
+	}
+
+	@Override
+	public Theme findByName(String nameTheme) throws Exception {
+		return themeDao.findByName(nameTheme);
 	}
 
 }

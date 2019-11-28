@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.we.weLearning.model.User;
 import br.com.we.weLearning.service.UserService;
 
-@RestController
+@RestController("UserController")
 public class UserController {
 
 	@Autowired
@@ -75,10 +75,7 @@ public class UserController {
 	        	}
 	        	else {
 	        		retorno.put("erro", "User not found");
-	        		return retorno;
 	        	}
-			
-			ok = true;
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -140,9 +137,9 @@ public class UserController {
         try { 
         	userService.deleteById(idUser);
         	ok = true;
-        	retorno.put("response", "Falha ao deletar Usuário");
         } catch (Exception e) { 
             e.printStackTrace(); 
+            retorno.put("erro", "Falha ao deletar Usuário");
         } 
  
 
@@ -189,7 +186,7 @@ public class UserController {
         		retorno.put("users", users);
         	}
         	else {
-        		retorno.put("erro", "Users not found");
+        		retorno.put("message", "Users not found");
         		return retorno;
         	}
         } catch (Exception e) { 

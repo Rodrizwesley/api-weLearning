@@ -151,4 +151,26 @@ public class ContentCustomDaoImpl implements ContentCustomDao{
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> getAllIdContentsByIdTheme(long idTheme) throws Exception {
+		StringBuilder sql = new StringBuilder();
+		
+		sql
+		.append("SELECT")
+		.append(" content.id_content")
+		.append(" FROM content ")
+		.append(" WHERE content.id_theme = :idTheme");
+		
+		try {
+			Query query = em.createNativeQuery(sql.toString()).setParameter("idTheme", idTheme);
+			
+			return query.getResultList();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }

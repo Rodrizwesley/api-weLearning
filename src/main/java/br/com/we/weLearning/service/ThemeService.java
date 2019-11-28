@@ -16,6 +16,8 @@ public interface ThemeService {
 	
 	Theme findById(long id) throws Exception;
 	
+	Theme findByName(String nameTheme) throws Exception;
+	
 	List<Theme> findByNameTheme(String strName) throws Exception;
 	
 	List<Theme> getAllThemesAtive() throws Exception;

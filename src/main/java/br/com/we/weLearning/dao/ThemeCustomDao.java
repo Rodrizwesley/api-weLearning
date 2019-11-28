@@ -8,6 +8,8 @@ public interface ThemeCustomDao {
 	
 	void updateTheme(Theme theme) throws Exception;
 	
+	Theme findByName(String nmTheme) throws Exception;
+	
 	List<Theme> searchNameTheme(String theme) throws Exception;
 	
 	void inativeThemeById(long idTheme) throws Exception;
@@ -19,7 +21,5 @@ public interface ThemeCustomDao {
 	List<Theme> getAllThemesInative() throws Exception;
 	
 	List<Theme> getAllThemesDeleted() throws Exception;
-	
-	List<Theme> getAllThemes() throws Exception;
 	
 }
