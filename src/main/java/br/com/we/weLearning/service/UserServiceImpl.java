@@ -1,5 +1,6 @@
 package br.com.we.weLearning.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.we.weLearning.dao.UserDao;
+import br.com.we.weLearning.enums.DatabaseStatus;
 import br.com.we.weLearning.model.User;
 
 @Service("UserService")
@@ -20,26 +22,30 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User save(User user) throws Exception {
+		user.setDatabaseStatus(DatabaseStatus.ATIVE.getDatabaseStatus());
+		user.setDateLastAccess(new Date());
 		return userDao.save(user);
 	}
 
 	@Override
 	public User update(User user) throws Exception {
-		User _user = userDao.findById((long) user.getIdUser()).get();
+		Optional<User> optional_user = userDao.findById(user.getIdUser());
 		
-		if(_user != null) {
+		if(optional_user.isPresent()) {
+			User _user = optional_user.get();
 			
 			_user.setEmail(user.getEmail());
 			_user.setName(user.getName());
 			_user.setPhone(user.getPhone());
 			_user.setProfile(user.getProfile());
 			_user.setPassword(user.getPassword());
-			
+		
 			return userDao.save(_user);
 		}
 		else {
 			return null;
 		}
+		
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package br.com.we.weLearning.dao;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,7 +22,14 @@ public class UserCustomDaoImpl implements UserCustomDao{
 
 	@Autowired
 	EntityManager em;
+	
+	@Autowired
+	ThemeDao themeDao;
+	
+	@Autowired
+	ContentDao contentDao;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public User findByUsername(String username) throws Exception {
 		StringBuilder sql = new StringBuilder();
@@ -36,40 +44,23 @@ public class UserCustomDaoImpl implements UserCustomDao{
 			Query query = em.createNativeQuery(sql.toString());
 			query.setParameter("username", username);
 			
-			Iterator result = query.getResultList().iterator();
 			
-			User user = new User();
-						
-			while (result.hasNext()) {
-				Object[] obj = (Object[]) result.next();
-				
-				System.out.println(obj[0]);
-				
-				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
-				
-				if(obj[0] != null) {
-					user.setIdUser(Long.parseLong(obj[0].toString()));
-					user.setCpf(obj[1].toString());
-					user.setDatabaseStatus(obj[2] == null ? null :Integer.parseInt(obj[2].toString()));
-					user.setDateLastAccess(obj[3] == null ? null : df.parse(obj[3].toString()));
-					user.setEmail(obj[4].toString());
-					user.setName(obj[5].toString());
-					user.setPassword(obj[6].toString());
-					user.setPhone(obj[7].toString());
-					user.setProfile(obj[8].toString());
-					user.setUsername(obj[9].toString());
-				}
-				else {
-					user = null;
-				}
+			List<User> result = query.getResultList();
+			
+			if(result.size() > 0) {
+				return result.get(0);
 			}
-			return user;
+			else {
+				return null;
+			}
+				
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public User findByCpf(String cpf) throws Exception {
 		StringBuilder sql = new StringBuilder();
@@ -84,37 +75,15 @@ public class UserCustomDaoImpl implements UserCustomDao{
 			Query query = em.createNativeQuery(sql.toString());
 			query.setParameter("cpf", cpf);
 			
-//			return (User) query.getResultList().get(0);
-			System.out.println("==========================================");
-			System.out.println(query.getFirstResult());
-			Iterator result = query.getResultList().iterator();
-			
-			User user = new User();
+			List<User> result = query.getResultList();
+
 						
-			while (result.hasNext()) {
-				Object[] obj = (Object[]) result.next();
-				
-				System.out.println(obj[0].toString());
-				
-				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
-				
-				if(obj[0] != null) {
-					user.setIdUser(Long.parseLong(obj[0].toString()));
-					user.setCpf(obj[1].toString());
-					user.setDatabaseStatus(obj[2] == null ? null :Integer.parseInt(obj[2].toString()));
-					user.setDateLastAccess(obj[3] == null ? null : df.parse(obj[3].toString()));
-					user.setEmail(obj[4].toString());
-					user.setName(obj[5].toString());
-					user.setPassword(obj[6].toString());
-					user.setPhone(obj[7].toString());
-					user.setProfile(obj[8].toString());
-					user.setUsername(obj[9].toString());
-				}
-				else {
-					user = null;
-				}
+			if(result.size() > 0) {
+				return result.get(0);
 			}
-			return user;
+			else {
+				return null;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -175,7 +144,7 @@ public class UserCustomDaoImpl implements UserCustomDao{
 	@Transactional
 	@Override
 	public void inativeById(long id) throws Exception {
-        String sql = "update user set user.database_status = :dataBaseStatus where id_useer = :idUser"; 
+        String sql = "UPDATE User SET databaseStatus = :dataBaseStatus WHERE idUser = :idUser"; 
         Query createQuery = em.createQuery(sql); 
         createQuery.setParameter("idUser", id);
         createQuery.setParameter("dataBaseStatus", DatabaseStatus.INACTIVE.getDatabaseStatus()); 
@@ -186,7 +155,7 @@ public class UserCustomDaoImpl implements UserCustomDao{
 	@Transactional
 	@Override
 	public void deleteById(long id) throws Exception {
-        String sql = "update user set user.database_status = :dataBaseStatus where id_user = :idUser"; 
+		String sql = "UPDATE User SET databaseStatus = :dataBaseStatus WHERE idUser = :idUser"; 
         Query createQuery = em.createQuery(sql); 
         createQuery.setParameter("idUser", id);
         createQuery.setParameter("dataBaseStatus", DatabaseStatus.EXCLUDED.getDatabaseStatus()); 
@@ -210,7 +179,37 @@ public class UserCustomDaoImpl implements UserCustomDao{
 		Query query = em.createNativeQuery(sql.toString());
 		
 		query.setParameter("dataBaseStatus", DatabaseStatus.ATIVE.getDatabaseStatus());
-		return query.getResultList();
+		List<Object> _result = query.getResultList();
+		
+		List<User> _return = new ArrayList<>();
+		
+		
+//		System.out.println(_result.size());
+		if(_result.size() > 0) {
+			for(Object user : _result) {
+				Object[] obj = (Object[]) user;
+				User _user = new User();
+				
+				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+				
+				_user.setIdUser(Long.parseLong(obj[0].toString()));
+				_user.setCpf(obj[1].toString());
+				_user.setDatabaseStatus(obj[2] == null ? null :Integer.parseInt(obj[2].toString()));
+				_user.setDateLastAccess(obj[3] == null ? null : df.parse(obj[3].toString()));
+				_user.setEmail(obj[4].toString());
+				_user.setName(obj[5].toString());
+				_user.setPassword(obj[6].toString());
+				_user.setPhone(obj[7].toString());
+				_user.setProfile(obj[8].toString());
+				_user.setUsername(obj[9].toString());
+				_user.setThemes(getAllThemesOfUserBydIdUSer(Long.parseLong(obj[0].toString())));
+				_user.setContents(getAllContentOfUserBydIdUSer(Long.parseLong(obj[0].toString())));
+				
+				_return.add(_user);
+			}
+		}
+		
+		return _return;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -227,17 +226,47 @@ public class UserCustomDaoImpl implements UserCustomDao{
 		Query query = em.createNativeQuery(sql.toString());
 		
 		query.setParameter("dataBaseStatus", DatabaseStatus.INACTIVE.getDatabaseStatus());
-		return query.getResultList();
+		List<Object> _result = query.getResultList();
+		
+		List<User> _return = new ArrayList<>();
+		
+		
+//		System.out.println(_result.size());
+		if(_result.size() > 0) {
+			for(Object user : _result) {
+				Object[] obj = (Object[]) user;
+				User _user = new User();
+				
+				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+				
+				_user.setIdUser(Long.parseLong(obj[0].toString()));
+				_user.setCpf(obj[1].toString());
+				_user.setDatabaseStatus(obj[2] == null ? null :Integer.parseInt(obj[2].toString()));
+				_user.setDateLastAccess(obj[3] == null ? null : df.parse(obj[3].toString()));
+				_user.setEmail(obj[4].toString());
+				_user.setName(obj[5].toString());
+				_user.setPassword(obj[6].toString());
+				_user.setPhone(obj[7].toString());
+				_user.setProfile(obj[8].toString());
+				_user.setUsername(obj[9].toString());
+				_user.setThemes(getAllThemesOfUserBydIdUSer(Long.parseLong(obj[0].toString())));
+				_user.setContents(getAllContentOfUserBydIdUSer(Long.parseLong(obj[0].toString())));
+				
+				_return.add(_user);
+			}
+		}
+		
+		return _return;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	@Override
 	public List<User> findAllUsersDeleted() throws Exception {
 		StringBuilder sql = new StringBuilder();
 		
 		sql
 		.append("SELECT")
-		.append(" user.*")
+		.append(" user.* ")
 		.append(" FROM user")
 		.append(" WHERE user.database_status = :dataBaseStatus");
 		
@@ -245,8 +274,37 @@ public class UserCustomDaoImpl implements UserCustomDao{
 			Query query = em.createNativeQuery(sql.toString());
 			
 			query.setParameter("dataBaseStatus", DatabaseStatus.EXCLUDED.getDatabaseStatus());
-			return query.getResultList();
+			List<Object> _result = query.getResultList();
 			
+			List<User> _return = new ArrayList<>();
+			
+			
+//			System.out.println(_result.size());
+			if(_result.size() > 0) {
+				for(Object user : _result) {
+					Object[] obj = (Object[]) user;
+					User _user = new User();
+					
+					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+					
+					_user.setIdUser(Long.parseLong(obj[0].toString()));
+					_user.setCpf(obj[1].toString());
+					_user.setDatabaseStatus(obj[2] == null ? null :Integer.parseInt(obj[2].toString()));
+					_user.setDateLastAccess(obj[3] == null ? null : df.parse(obj[3].toString()));
+					_user.setEmail(obj[4].toString());
+					_user.setName(obj[5].toString());
+					_user.setPassword(obj[6].toString());
+					_user.setPhone(obj[7].toString());
+					_user.setProfile(obj[8].toString());
+					_user.setUsername(obj[9].toString());
+					_user.setThemes(getAllThemesOfUserBydIdUSer(Long.parseLong(obj[0].toString())));
+					_user.setContents(getAllContentOfUserBydIdUSer(Long.parseLong(obj[0].toString())));
+					
+					_return.add(_user);
+				}
+			}
+			
+			return _return;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -266,19 +324,29 @@ public class UserCustomDaoImpl implements UserCustomDao{
 		
 		sql
 		.append("SELECT")
-		.append(" theme.id_theme,")
-		.append(" theme.nm_theme,")
-		.append(" theme.desc_theme ")
+		.append(" theme.id_theme")
 		.append(" FROM theme")
 		.append(" LEFT JOIN users_theme ON users_theme.id_user = :idUser ")
-		.append(" WHERE user.database_status = :dataBaseStatus ");
+		.append(" WHERE theme.database_status = :dataBaseStatus ");
 		
 		try {
 			Query query = em.createNativeQuery(sql.toString());
 			
-			query.setParameter("dataBaseStatus", DatabaseStatus.ATIVE.getDatabaseStatus()).setParameter("iduser", idUser);
-			return query.getResultList();
+			query.setParameter("dataBaseStatus", DatabaseStatus.ATIVE.getDatabaseStatus()).setParameter("idUser", idUser);
+			List<Object> _result = query.getResultList();
 			
+			List<Theme> _return = new ArrayList<>();
+			
+			if(_result.size() > 0) {
+				for(Object theme : _result) {
+					Object[] obj = (Object[]) theme;
+					Theme _theme = themeDao.findById(Long.parseLong(obj[0].toString())).get();
+					
+					_return.add(_theme);
+				}
+			}
+			
+			return _return;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -290,7 +358,7 @@ public class UserCustomDaoImpl implements UserCustomDao{
 	public List<Content> getAllContentOfUserBydIdUSer(long idUser) throws Exception {
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" SELECT content.*")
+		sql.append(" SELECT content.id_content")
 		.append(" FROM content")
 		.append(" WHERE content.id_owner_user = :idUser")
 		.append(" AND content.database_status = :idDataBaseStatus");
@@ -299,8 +367,21 @@ public class UserCustomDaoImpl implements UserCustomDao{
 		try {
 			Query query = em.createNativeQuery(sql.toString());
 			
-			query.setParameter("idDataBaseStatus", DatabaseStatus.ATIVE.getDatabaseStatus()).setParameter("iduser", idUser);
-			return query.getResultList();
+			query.setParameter("idDataBaseStatus", DatabaseStatus.ATIVE.getDatabaseStatus()).setParameter("idUser", idUser);
+			List<Object> _result = query.getResultList();
+			
+			List<Content> _return = new ArrayList<>();
+			
+			if(_result.size() > 0) {
+				for(Object content : _result) {
+					Object[] obj = (Object[]) content;
+					Content _content = contentDao.findById(Long.parseLong(obj[0].toString())).get();
+					
+					_return.add(_content);
+				}
+			}
+			
+			return _return;
 			
 		} catch (Exception e) {
 			e.printStackTrace();

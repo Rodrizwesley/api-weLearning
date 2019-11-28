@@ -2,6 +2,7 @@ package br.com.we.weLearning.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -30,18 +31,20 @@ public class UserController {
 	HttpSession httpSession;
 	
 	@RequestMapping(value = "/user", method = RequestMethod.PUT, produces = "application/json")
-	public ResponseEntity<User> newUser(@RequestBody User data) throws Exception{
+	public Map<String, Object> newUser(@RequestBody User data) throws Exception{
 		
 		Map<String, Object> retorno = new HashMap<String, Object>();
 		Boolean ok = false;
 		User user = null;
 		
 		try {
+
 			if(userService.findByusername(data.getUsername()) == null && userService.findByCpf(data.getCpf()) == null) {
 				user = userService.save(data);
+				retorno.put("user", user);
 			}
 			else {
-				System.out.println("teste");
+				retorno.put("erro", "This user already exist");
 			}
 			
 			ok = true;
@@ -54,29 +57,26 @@ public class UserController {
         	retorno.put("response", ok);
         }
  
-        return new ResponseEntity<User>(user, HttpStatus.OK); 
+        return retorno; 
 	}
 	
 	@RequestMapping(value = "/user", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<User> updateUser(@RequestBody User data) throws Exception{
+	public Map<String, Object> updateUser(@RequestBody User data) throws Exception{
 		
 		Map<String, Object> retorno = new HashMap<String, Object>();
 		Boolean ok = false;
 		User user = null;
 		
 		try {
-			if(userService.findByusername(data.getUsername()) == null && userService.findByCpf(data.getCpf()) == null) {
-				user = userService.update(user);
+				user = userService.update(data);
 	        	if(user != null) {
 	        		ok = true;
+	        		retorno.put("user", user);
 	        	}
 	        	else {
-	        		return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+	        		retorno.put("erro", "User not found");
+	        		return retorno;
 	        	}
-			}
-			else {
-				System.out.println("teste");
-			}
 			
 			ok = true;
 		}
@@ -86,11 +86,11 @@ public class UserController {
 		
 		retorno.put("response", ok);
 		
-		return new ResponseEntity<User>(user, HttpStatus.OK); 
+		return retorno; 
 	}
 	
     @RequestMapping(value = "/user/{idUser}", method = RequestMethod.GET, produces = "application/json") 
-    public ResponseEntity<User> getUser(@PathVariable("idUser") Long idUser) throws UnsupportedEncodingException  { 
+    public Map<String, Object> getUser(@PathVariable("idUser") Long idUser) throws UnsupportedEncodingException  { 
         Map<String, Object> retorno = new HashMap<String, Object>();
         Boolean ok = false; 
         User user = null;
@@ -99,9 +99,11 @@ public class UserController {
         	user = userService.findById(idUser);
         	if(user != null) {
         		ok = true;
+        		retorno.put("user", user);
         	}
         	else {
-        		return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+        		retorno.put("erro", "User not found");
+        		return retorno;
         	}
         } catch (Exception e) { 
             e.printStackTrace(); 
@@ -111,7 +113,7 @@ public class UserController {
         	retorno.put("response", ok);
         }
  
-        return new ResponseEntity<User>(user, HttpStatus.OK); 
+        return retorno; 
     }
     
     @RequestMapping(value = "/user/inative/{idUser}", method = RequestMethod.POST, produces = "application/json") 
@@ -126,9 +128,7 @@ public class UserController {
             e.printStackTrace(); 
         } 
  
-
-        	retorno.put("response", ok);
-
+    	retorno.put("response", ok);
  
         return retorno; 
     }
@@ -174,6 +174,87 @@ public class UserController {
     	catch (Exception e) {
     		return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
 		}
+    }
+    
+    @RequestMapping(value = "/user/getAll", method = RequestMethod.GET, produces = "application/json")
+    public Map<String, Object> getAll() throws Exception {
+        Map<String, Object> retorno = new HashMap<String, Object>();
+        Boolean ok = false; 
+        List<User> users = null;
+        try { 
+        	
+        	users = userService.findAllUsers();
+        	if(users.size() > 0) {
+        		ok = true;
+        		retorno.put("users", users);
+        	}
+        	else {
+        		retorno.put("erro", "Users not found");
+        		return retorno;
+        	}
+        } catch (Exception e) { 
+            e.printStackTrace(); 
+        } 
+ 
+        if(!ok) {
+        	retorno.put("response", ok);
+        }
+ 
+        return retorno; 
+    }
+    
+    @RequestMapping(value = "/user/getAllInative", method = RequestMethod.GET, produces = "application/json")
+    public Map<String, Object> getAlInative() throws Exception {
+        Map<String, Object> retorno = new HashMap<String, Object>();
+        Boolean ok = false; 
+        List<User> users = null;
+        try { 
+        	
+        	users = userService.findAllUsersInvalid();
+        	if(users.size() > 0) {
+        		ok = true;
+        		retorno.put("users", users);
+        	}
+        	else {
+        		retorno.put("erro", "Users not found");
+        		return retorno;
+        	}
+        } catch (Exception e) { 
+            e.printStackTrace(); 
+        } 
+ 
+        if(!ok) {
+        	retorno.put("response", ok);
+        }
+ 
+        return retorno; 
+    }
+    
+    @RequestMapping(value = "/user/getAllDeleted", method = RequestMethod.GET, produces = "application/json")
+    public Map<String, Object> getAllDeleted() throws Exception {
+        Map<String, Object> retorno = new HashMap<String, Object>();
+        Boolean ok = false; 
+        List<User> users = null;
+        try { 
+        	
+        	users = userService.findAllUsersDeleted();
+        	if(users.size() > 0) {
+        		ok = true;
+        		retorno.put("users", users);
+        	}
+        	else {
+        		retorno.put("erro", "Users not found");
+        		return retorno;
+        	}
+        } catch (Exception e) { 
+            e.printStackTrace(); 
+        } 
+ 
+        if(!ok) {
+        	retorno.put("response", ok);
+        }
+ 
+        return retorno; 
     }
 
 	
