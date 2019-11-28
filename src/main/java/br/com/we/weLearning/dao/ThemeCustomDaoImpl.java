@@ -35,10 +35,11 @@ public class ThemeCustomDaoImpl implements ThemeCustomDao{
 		String sql = "SELECT " + 
 				"theme.* " + 
 				"FROM theme " + 
-				"WHERE theme.nm_theme LIKE ':strSearch' "+ 
+				"WHERE LOWER(theme.nm_theme) LIKE '"+theme.toLowerCase()+"' "+ 
 				"AND theme.database_status = :dataBaseStatus";
 		try {
-			Query query = em.createNativeQuery(sql.toString());
+			Query query = em.createNativeQuery(sql.toString())
+					.setParameter("dataBaseStatus", DatabaseStatus.ATIVE.getDatabaseStatus());
 			List<Object> _result = query.getResultList();
 			
 			List<Theme> themes = new ArrayList<Theme>();
@@ -53,7 +54,7 @@ public class ThemeCustomDaoImpl implements ThemeCustomDao{
 					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
 					
 					_theme.setIdTheme(Long.parseLong(obj[0].toString()));
-					_theme.setCreateTheme(obj[1] == null ? null : df.parse(obj[3].toString()));
+					_theme.setCreateTheme(obj[1] == null ? null : df.parse(obj[1].toString()));
 					_theme.setDatabaseStatus(obj[2] == null ? null :Integer.parseInt(obj[2].toString()));
 					_theme.setDescTheme(obj[3].toString());
 					_theme.setNmTheme(obj[4].toString());
@@ -66,6 +67,8 @@ public class ThemeCustomDaoImpl implements ThemeCustomDao{
 					}
 					
 					_theme.setContents(contents);
+					
+					themes.add(_theme);
 				}
 			}
 			

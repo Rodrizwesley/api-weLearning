@@ -253,4 +253,28 @@ public class ThemeController {
 		
 		return _return;
 	}
+	
+	@RequestMapping(value = "/theme/search/{strTheme}", method = RequestMethod.GET, produces = "application/json")
+	public Map<String, Object> searchTheme(@PathVariable("strTheme") String strTheme) throws Exception {
+		Map<String, Object> _return = new HashMap<String, Object>();
+		Boolean ok = false;
+		List<Theme> themes = null;
+		
+		try {
+			themes = themeService.findByNameTheme(strTheme);
+			
+			if(themes.size() > 0) {
+				ok = true;
+				_return.put("theme", themes);
+			}
+			else {
+				_return.put("message", "Themes not found");
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return _return;
+	}
 }
