@@ -40,20 +40,14 @@ public class ContentController {
 	
 	
 	@RequestMapping(value = "/content", method = RequestMethod.PUT, produces = "application/json")
-	public Map<String, Object> saveContent(@RequestBody JsonNode data) throws Exception{
+	public Map<String, Object> saveContent(@RequestBody Content data) throws Exception{
 		Map<String, Object> _return = new HashMap<String, Object>();
-		ObjectMapper objectMapper = new ObjectMapper();
 		Boolean ok = false;
-		Content content = null;
-		Theme theme = null;
-		User ownerUser = null;
+		Content content = data;
+		Theme theme = themeService.findById(data.getTheme().getIdTheme());
+		User ownerUser = userService.findById(data.getOwnerUser().getIdUser());
 		
 		try {
-//			System.out.println(data.get("content"));
-			content = objectMapper.readValue(data.get("content").toString(), Content.class);
-			theme = themeService.findById(objectMapper.readValue(data.get("theme").toString(), Long.class));
-			ownerUser = userService.findById(objectMapper.readValue(data.get("ownerUser").toString(), Long.class));
-			
 			content.setOwnerUser(ownerUser);
 			content.setTheme(theme);
 			Content _content = contentService.save(content);

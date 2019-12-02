@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "theme")
@@ -32,8 +32,9 @@ public class Theme implements Serializable{
 	
 	private int databaseStatus;
 	
-	@JsonManagedReference
+//	@JsonManagedReference
 	@OneToMany(mappedBy = "theme", targetEntity = Content.class, fetch = FetchType.LAZY)
+	@JsonIgnore
 	private List<Content> contents;
 	
 	public Theme() {

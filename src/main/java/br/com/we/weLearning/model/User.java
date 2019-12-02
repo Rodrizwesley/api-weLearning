@@ -15,7 +15,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "user")
@@ -52,8 +52,9 @@ public class User implements Serializable{
         inverseJoinColumns = @JoinColumn(name = "id_theme"))
     private List<Theme> themes;
 	
-	@JsonManagedReference
+//	@JsonManagedReference
 	@OneToMany(mappedBy = "ownerUser", targetEntity = Content.class, fetch = FetchType.LAZY)
+	@JsonIgnore
 	private List<Content> contents;
 	
 	public User() {	
