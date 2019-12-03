@@ -18,10 +18,10 @@ import br.com.we.weLearning.model.Theme;
 public class ThemeCustomDaoImpl implements ThemeCustomDao{
 
 	@Autowired
-	EntityManager em;
+	private EntityManager em;
 	
 	@Autowired
-	ContentDao contentDao;
+	private ContentDao contentDao;
 
 	@Override
 	public void updateTheme(Theme theme) throws Exception {
@@ -35,7 +35,7 @@ public class ThemeCustomDaoImpl implements ThemeCustomDao{
 		String sql = "SELECT " + 
 				"theme.* " + 
 				"FROM theme " + 
-				"WHERE LOWER(theme.nm_theme) LIKE '"+theme.toLowerCase()+"' "+ 
+				"WHERE LOWER(theme.nm_theme) LIKE '%"+theme.toLowerCase()+"%' "+ 
 				"AND theme.database_status = :dataBaseStatus";
 		try {
 			Query query = em.createNativeQuery(sql.toString())
@@ -140,6 +140,8 @@ public class ThemeCustomDaoImpl implements ThemeCustomDao{
 					}
 					
 					theme.setContents(contents);
+					
+					themes.add(theme);
 				}
 			}
 			
@@ -193,6 +195,8 @@ public class ThemeCustomDaoImpl implements ThemeCustomDao{
 					}
 					
 					theme.setContents(contents);
+					
+					themes.add(theme);
 				}
 			}
 			
@@ -246,6 +250,7 @@ public class ThemeCustomDaoImpl implements ThemeCustomDao{
 					}
 					
 					theme.setContents(contents);
+					themes.add(theme);
 				}
 			}
 			

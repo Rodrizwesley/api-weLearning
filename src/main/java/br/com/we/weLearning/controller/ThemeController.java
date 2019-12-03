@@ -21,11 +21,11 @@ import br.com.we.weLearning.service.ThemeService;
 public class ThemeController {
 	
 	@Autowired
-	ThemeService themeService;
+	private ThemeService themeService;
 	
 	@Lazy
 	@Autowired
-	HttpSession httpSession;
+	private HttpSession httpSession;
 	
 	@RequestMapping(value = "/theme", method = RequestMethod.PUT, produces = "application/json")
 	public Map<String, Object> newTheme(@RequestBody Theme data) throws Exception {
@@ -66,14 +66,14 @@ public class ThemeController {
 		
 		try {
 				
-			theme = themeService.save(data);
+			theme = themeService.update(data);
 			
 			if(theme != null) {
 				_return.put("theme", theme);
 				ok = true;
 			}
 			else {
-				_return.put("erro", "Theme not found");
+				_return.put("error", "Theme not found");
 			}
 		}
 		catch(Exception e) {

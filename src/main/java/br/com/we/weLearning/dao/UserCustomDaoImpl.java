@@ -21,13 +21,13 @@ import br.com.we.weLearning.model.User;
 public class UserCustomDaoImpl implements UserCustomDao{
 
 	@Autowired
-	EntityManager em;
+	private EntityManager em;
 	
 	@Autowired
-	ThemeDao themeDao;
+	private ThemeDao themeDao;
 	
 	@Autowired
-	ContentDao contentDao;
+	private ContentDao contentDao;
 
 	@SuppressWarnings("unchecked")
 	@Override

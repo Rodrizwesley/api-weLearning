@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.we.weLearning.dao.ContentDao;
+import br.com.we.weLearning.dao.ThemeDao;
+import br.com.we.weLearning.dao.UserDao;
 import br.com.we.weLearning.enums.DatabaseStatus;
 import br.com.we.weLearning.model.Content;
 
@@ -16,7 +18,13 @@ import br.com.we.weLearning.model.Content;
 public class ContentServiceImpl implements ContentService{
 	
 	@Autowired
-	ContentDao contentDao;
+	private ContentDao contentDao;
+	
+	@Autowired
+	private UserDao userDao;
+	
+	@Autowired
+	private ThemeDao themeDao;
 	
 	@Override
 	public Content save(Content content) throws Exception {
@@ -49,8 +57,17 @@ public class ContentServiceImpl implements ContentService{
 	}
 
 	@Override
-	public List<Content> searchNameContent(String content) throws Exception {
-		return contentDao.searchNameContent(content);
+	public List<Content> searchNameContent(String strContent) throws Exception {
+		List<Content> contents = contentDao.searchNameContent(strContent);
+		
+		if(contents.size() > 0) {
+			for(Content content : contents) {
+				content.setTheme(themeDao.findById(content.getTheme().getIdTheme()).get());
+				content.setOwnerUser(userDao.findById(content.getOwnerUser().getIdUser()).get());
+			}
+		}
+		
+		return contents;
 	}
 
 	@Override
@@ -67,25 +84,50 @@ public class ContentServiceImpl implements ContentService{
 
 	@Override
 	public List<Content> getAllContentsAtive() throws Exception {
-		return contentDao.getAllContentsAtive();
+		List<Content> contents = contentDao.getAllContentsAtive();
+		
+		if(contents.size() > 0) {
+			for(Content content : contents) {
+				content.setTheme(themeDao.findById(content.getTheme().getIdTheme()).get());
+				content.setOwnerUser(userDao.findById(content.getOwnerUser().getIdUser()).get());
+			}
+		}
+		
+		return contents;
 	}
 
 	@Override
 	public List<Content> getAllContentsInative() throws Exception {
-		// TODO Auto-generated method stub
-		return contentDao.getAllContentsInative();
+		List<Content> contents = contentDao.getAllContentsInative();
+		
+		if(contents.size() > 0) {
+			for(Content content : contents) {
+				content.setTheme(themeDao.findById(content.getTheme().getIdTheme()).get());
+				content.setOwnerUser(userDao.findById(content.getOwnerUser().getIdUser()).get());
+			}
+		}
+		
+		return contents;
 	}
 
 	@Override
 	public List<Content> getAllContentsDeleted() throws Exception {
-		// TODO Auto-generated method stub
-		return contentDao.getAllContentsDeleted();
+		List<Content> contents = contentDao.getAllContentsDeleted();
+		
+		if(contents.size() > 0) {
+			for(Content content : contents) {
+				content.setTheme(themeDao.findById(content.getTheme().getIdTheme()).get());
+				content.setOwnerUser(userDao.findById(content.getOwnerUser().getIdUser()).get());
+			}
+		}
+		
+		return contents;
 	}
 
 	@Override
 	public List<Content> getAllContents() throws Exception {
 		// TODO Auto-generated method stub
-		return contentDao.getAllContents();
+		return contentDao.findAll();
 	}
 
 }

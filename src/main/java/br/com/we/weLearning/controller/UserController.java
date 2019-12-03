@@ -1,6 +1,7 @@
 package br.com.we.weLearning.controller;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,14 +18,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.we.weLearning.model.Theme;
 import br.com.we.weLearning.model.User;
+import br.com.we.weLearning.service.ThemeService;
 import br.com.we.weLearning.service.UserService;
 
 @RestController("UserController")
 public class UserController {
 
 	@Autowired
-	UserService userService;
+	private UserService userService;
+	
+	@Autowired
+	private ThemeService themeService;
 	
 	@Lazy
 	@Autowired
@@ -35,11 +41,21 @@ public class UserController {
 		
 		Map<String, Object> retorno = new HashMap<String, Object>();
 		Boolean ok = false;
+		List<Theme> themes = new ArrayList<Theme>();
 		User user = null;
 		
 		try {
 
+
 			if(userService.findByusername(data.getUsername()) == null && userService.findByCpf(data.getCpf()) == null) {
+				if(data.getThemes().size() > 0) {
+					for(Theme theme : data.getThemes()) {
+						Theme _theme = themeService.findById(theme.getIdTheme());
+						
+						themes.add(_theme);
+					}
+				}
+				data.setThemes(themes);
 				user = userService.save(data);
 				retorno.put("user", user);
 			}
@@ -65,11 +81,23 @@ public class UserController {
 		
 		Map<String, Object> retorno = new HashMap<String, Object>();
 		Boolean ok = false;
+		List<Theme> themes = new ArrayList<Theme>();
 		User user = null;
 		
 		try {
+				if(data.getThemes().size() > 0) {
+					for(Theme theme : data.getThemes()) {
+						Theme _theme = themeService.findById(theme.getIdTheme());
+						
+						themes.add(_theme);
+					}
+				}
+				data.setThemes(themes);
+				
 				user = userService.update(data);
-	        	if(user != null) {
+	        	
+				if(user != null) {
+	        		
 	        		ok = true;
 	        		retorno.put("user", user);
 	        	}

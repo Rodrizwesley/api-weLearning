@@ -16,7 +16,7 @@ import br.com.we.weLearning.model.Theme;
 public class ThemeServiceImpl implements ThemeService {
 	
 	@Autowired
-	ThemeDao themeDao;
+	private ThemeDao themeDao;
 
 	@Override
 	public Theme save(Theme theme) throws Exception {
@@ -26,7 +26,7 @@ public class ThemeServiceImpl implements ThemeService {
 	}
 
 	@Override
-	public void update(Theme theme) throws Exception {
+	public Theme update(Theme theme) throws Exception {
 		Theme _theme = themeDao.findById(theme.getIdTheme()).get();
 		
 		if(_theme != null) {
@@ -34,7 +34,10 @@ public class ThemeServiceImpl implements ThemeService {
 			_theme.setNmTheme(theme.getNmTheme());
 			_theme.setDescTheme(theme.getDescTheme());
 			
-			themeDao.save(_theme);
+			return themeDao.save(_theme);
+		}
+		else {
+			return null;
 		}
 		
 	}

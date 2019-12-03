@@ -8,7 +8,7 @@ public interface ThemeService {
 	
 	Theme save(Theme theme) throws Exception;
 	
-	void update(Theme theme) throws Exception;
+	Theme update(Theme theme) throws Exception;
 	
 	void deleteById(long id) throws Exception;
 	

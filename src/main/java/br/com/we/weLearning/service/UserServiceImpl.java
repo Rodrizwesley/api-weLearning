@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.we.weLearning.dao.UserDao;
 import br.com.we.weLearning.enums.DatabaseStatus;
+import br.com.we.weLearning.model.Theme;
 import br.com.we.weLearning.model.User;
 
 @Service("UserService")
@@ -18,7 +19,7 @@ import br.com.we.weLearning.model.User;
 public class UserServiceImpl implements UserService {
 	
 	@Autowired
-	UserDao userDao;
+	private UserDao userDao;
 
 	@Override
 	public User save(User user) throws Exception {
@@ -39,6 +40,13 @@ public class UserServiceImpl implements UserService {
 			_user.setPhone(user.getPhone());
 			_user.setProfile(user.getProfile());
 			_user.setPassword(user.getPassword());
+			if(user.getThemes().size() > 0) {
+				for(Theme theme : user.getThemes()) {
+					if(!(_user.getThemes().contains(theme))) {
+						_user.getThemes().add(theme);
+					}
+				}
+			}
 		
 			return userDao.save(_user);
 		}
